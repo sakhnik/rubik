@@ -10,6 +10,7 @@
 #include <string>
 #include <stdexcept>
 #include <cstdlib>
+#include <iostream>
 
 using namespace std;
 
@@ -51,22 +52,22 @@ int cCube::_Canvas2Space (unsigned coord) const
 
 bool cCube::_IsFront (cCell const& cell) const
 {
-    return cell.GetPos().GetX() == _lo;
+    return cell.GetPos().GetZ() == _hi;
 }
 
 bool cCube::_IsBack (cCell const& cell) const
 {
-    return cell.GetPos().GetX() == _hi;
+    return cell.GetPos().GetZ() == _lo;
 }
 
 bool cCube::_IsLeft (cCell const& cell) const
 {
-    return cell.GetPos().GetZ() == _lo;
+    return cell.GetPos().GetX() == _lo;
 }
 
 bool cCube::_IsRight (cCell const& cell) const
 {
-    return cell.GetPos().GetZ() == _hi;
+    return cell.GetPos().GetX() == _hi;
 }
 
 bool cCube::_IsTop (cCell const& cell) const
@@ -87,9 +88,9 @@ void cCube::Draw (cCanvas& canvas) const
         cVector const& pos = cell.GetPos();
         if (_IsFront (cell))
         {
-            cVector view (1, 0, 0);
+            cVector view (0, 0, -1);
             Colour colour = cell.GetColour (view);
-            canvas.SetPixel (_n + _Space2Canvas (pos.GetZ()),
+            canvas.SetPixel (_n + _Space2Canvas (pos.GetX()),
                              _n + _Space2Canvas (pos.GetY()),
                              colour);
         }
@@ -97,23 +98,23 @@ void cCube::Draw (cCanvas& canvas) const
         {
             cVector view (0, 1, 0);
             Colour colour = cell.GetColour (view);
-            canvas.SetPixel (_n + _Space2Canvas (pos.GetZ()),
-                             2*_n + _Space2Canvas (pos.GetX()),
+            canvas.SetPixel (_n + _Space2Canvas (pos.GetX()),
+                             _Space2Canvas (pos.GetZ()),
                              colour);
         }
         if (_IsLeft (cell))
         {
-            cVector view (0, 0, 1);
+            cVector view (1, 0, 0);
             Colour colour = cell.GetColour (view);
-            canvas.SetPixel (_hi - _Space2Canvas (pos.GetX()),
+            canvas.SetPixel (_Space2Canvas (pos.GetZ()),
                              _n + _Space2Canvas (pos.GetY()),
                              colour);
         }
         if (_IsBack (cell))
         {
-            cVector view (-1, 0, 0);
+            cVector view (0, 0, 1);
             Colour colour = cell.GetColour (view);
-            canvas.SetPixel (3*_n + _hi - _Space2Canvas (pos.GetZ()),
+            canvas.SetPixel (3*_n + _hi - _Space2Canvas (pos.GetX()),
                              _n + _Space2Canvas (pos.GetY()),
                              colour);
         }
@@ -121,15 +122,15 @@ void cCube::Draw (cCanvas& canvas) const
         {
             cVector view (0, -1, 0);
             Colour colour = cell.GetColour (view);
-            canvas.SetPixel (_n + _Space2Canvas (pos.GetZ()),
-                             _hi - _Space2Canvas (pos.GetX()),
+            canvas.SetPixel (_n + _Space2Canvas (pos.GetX()),
+                             2*_n + _hi - _Space2Canvas (pos.GetZ()),
                              colour);
         }
         if (_IsRight (cell))
         {
-            cVector view (0, 0, -1);
+            cVector view (-1, 0, 0);
             Colour colour = cell.GetColour (view);
-            canvas.SetPixel (2*_n + _Space2Canvas (pos.GetX()),
+            canvas.SetPixel (2*_n + _hi - _Space2Canvas (pos.GetZ()),
                              1*_n + _Space2Canvas (pos.GetY()),
                              colour);
         }
@@ -144,12 +145,12 @@ void cCube::TurnFront (int slice, bool clockwise)
     if (slice < 0)
         slice += _n;
 
-    int x = _Canvas2Space (slice);
+    int z = -_Canvas2Space (slice);
 
     for (_CellsT::iterator i = _cells.begin(); i != _cells.end(); ++i)
     {
-        if (i->GetPos().GetX() == x)
-            i->RotateX (clockwise);
+        if (i->GetPos().GetZ() == z)
+            i->RotateZ (clockwise);
     }
 }
 
@@ -178,12 +179,12 @@ void cCube::TurnSide (int slice, bool clockwise)
     if (slice < 0)
         slice += _n;
 
-    int z = _Canvas2Space (slice);
+    int x = _Canvas2Space (slice);
 
     for (_CellsT::iterator i = _cells.begin(); i != _cells.end(); ++i)
     {
-        if (i->GetPos().GetZ() == z)
-            i->RotateZ (clockwise);
+        if (i->GetPos().GetX() == x)
+            i->RotateX (clockwise);
     }
 }
 
@@ -212,7 +213,7 @@ void cCube::Roll (bool clockwise)
 {
     for (_CellsT::iterator i = _cells.begin(); i != _cells.end(); ++i)
     {
-        i->RotateX (clockwise);
+        i->RotateZ (clockwise);
     }
 }
 
@@ -228,7 +229,7 @@ void cCube::Pitch (bool clockwise)
 {
     for (_CellsT::iterator i = _cells.begin(); i != _cells.end(); ++i)
     {
-        i->RotateZ (clockwise);
+        i->RotateX (clockwise);
     }
 }
 
