@@ -8,17 +8,84 @@
 #include "Cube.hh"
 #include "Canvas.hh"
 #include <iostream>
+#include <cstdlib>
+#include <cstdio>
 
 using namespace std;
 
 int main (int argc, char* argv[])
 {
+    srand ((unsigned)time(NULL));
     try
     {
         cCube cube (3);
         cCanvas canvas (cube.GetN());
-        cube.Draw (canvas);
-        canvas.Render ();
+        while (true)
+        {
+            cout << endl;
+            cube.Draw (canvas);
+            canvas.Render ();
+            cout << "Move: ";
+            string move;
+            cin >> move;
+            if (move.size() < 1)
+                continue;
+            char cmd = move[0];
+            if (cmd == 'q' || cmd == 'Q')
+                break;
+            int splice (0);
+            switch (cmd)
+            {
+            case '#':
+                {
+                    unsigned count = 20;
+                    sscanf (move.c_str() + 1, "%d", &count);
+                    cube.Shuffle (count);
+                }
+            case 'f':
+            case 'F':
+                sscanf (move.c_str() + 1, "%d", &splice);
+                cube.TurnFront (splice, islower(cmd));
+                break;
+            case 's':
+            case 'S':
+                sscanf (move.c_str() + 1, "%d", &splice);
+                cube.TurnSide (splice, islower(cmd));
+                break;
+            case 't':
+            case 'T':
+                sscanf (move.c_str() + 1, "%d", &splice);
+                cube.TurnTop (splice, islower(cmd));
+                break;
+            case 'l':
+            case 'L':
+                cube.TurnSide (0, islower(cmd));
+                break;
+            case 'r':
+            case 'R':
+                cube.TurnSide (-1, islower(cmd));
+                break;
+            case 'b':
+            case 'B':
+                cube.TurnTop (-1, islower(cmd));
+                break;
+            case 'x':
+            case 'X':
+                cube.Roll (islower(cmd));
+                break;
+            case 'y':
+            case 'Y':
+                cube.Yaw (islower(cmd));
+                break;
+            case 'z':
+            case 'Z':
+                cube.Pitch (islower(cmd));
+                break;
+            default:
+                cout << "Huh?" << endl;
+            }
+        }
+        cout << "Good bye!" << endl;
     }
     catch (std::exception const& e)
     {

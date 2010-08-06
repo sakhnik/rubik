@@ -27,6 +27,10 @@ public:
 
     void Shuffle (unsigned count);
 
+    void Roll (bool clockwise);
+    void Yaw (bool clockwise);
+    void Pitch (bool clockwise);
+
 private:
     int _n;
     int _lo;

@@ -31,7 +31,7 @@ void cCanvas::Render () const
 
 void cCanvas::SetPixel (unsigned x, unsigned y, Colour colour)
 {
-    _pixels[(_height - 1 - y)*_width + x] = colour;
+    _pixels[y * _width + x] = colour;
 }
 
 // vim: set et ts=4 sw=4:

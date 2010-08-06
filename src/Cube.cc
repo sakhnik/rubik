@@ -208,4 +208,28 @@ void cCube::Shuffle (unsigned count)
     }
 }
 
+void cCube::Roll (bool clockwise)
+{
+    for (_CellsT::iterator i = _cells.begin(); i != _cells.end(); ++i)
+    {
+        i->RotateX (clockwise);
+    }
+}
+
+void cCube::Yaw (bool clockwise)
+{
+    for (_CellsT::iterator i = _cells.begin(); i != _cells.end(); ++i)
+    {
+        i->RotateY (clockwise);
+    }
+}
+
+void cCube::Pitch (bool clockwise)
+{
+    for (_CellsT::iterator i = _cells.begin(); i != _cells.end(); ++i)
+    {
+        i->RotateZ (clockwise);
+    }
+}
+
 // vim: set et ts=4 sw=4:
