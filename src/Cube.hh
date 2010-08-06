@@ -15,17 +15,19 @@ class cCanvas;
 class cCube
 {
 public:
-    cCube (unsigned n);
+    cCube (int n);
 
-    unsigned GetN () const { return _n; }
+    int GetN () const { return _n; }
 
     void Draw (cCanvas& canvas) const;
 
 private:
-    unsigned _n;
+    int _n;
 
     typedef std::vector<cCell> _CellsT;
     _CellsT _cells;
+
+    unsigned _Space2Canvas (int coord) const;
 };
 
 // vim: set et ts=4 sw=4:
