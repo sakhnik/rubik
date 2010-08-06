@@ -1,0 +1,4 @@
+
+exe cube : [ glob *.cc ] ;
+
+install stage : cube : <location>. ;
