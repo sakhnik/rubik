@@ -22,25 +22,25 @@ int cVector::operator* (cVector const& o) const
     return _x*o._x + _y*o._y + _z*o._z;
 }
 
-void cVector::RotateX ()
+void cVector::RotateX (bool clockwise)
 {
     int old_y = _y;
-    _y = -_z;
-    _z = old_y;
+    _y = clockwise ? _z : -_z;
+    _z = clockwise ? -old_y : old_y;
 }
 
-void cVector::RotateY ()
+void cVector::RotateY (bool clockwise)
 {
     int old_z = _z;
-    _z = -_x;
-    _x = old_z;
+    _z = clockwise ? _x : -_x;
+    _x = clockwise ? -old_z : old_z;
 }
 
-void cVector::RotateZ ()
+void cVector::RotateZ (bool clockwise)
 {
     int old_x = _x;
-    _x = -_y;
-    _y = old_x;
+    _x = clockwise ? _y : -_y;
+    _y = clockwise ? -old_x : old_x;
 }
 
 ostream& operator<< (ostream& os, cVector const& vect)

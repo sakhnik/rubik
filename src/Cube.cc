@@ -135,7 +135,7 @@ void cCube::Draw (cCanvas& canvas) const
     }
 }
 
-void cCube::TurnFront (int slice)
+void cCube::TurnFront (int slice, bool clockwise)
 {
     if (slice < 1 || slice > _n)
         throw invalid_argument ("Incorrect slice");
@@ -145,11 +145,11 @@ void cCube::TurnFront (int slice)
     for (_CellsT::iterator i = _cells.begin(); i != _cells.end(); ++i)
     {
         if (i->GetPos().GetX() == x)
-            i->RotateX ();
+            i->RotateX (clockwise);
     }
 }
 
-void cCube::TurnTop (int slice)
+void cCube::TurnTop (int slice, bool clockwise)
 {
     if (slice < 1 || slice > _n)
         throw invalid_argument ("Incorrect slice");
@@ -159,11 +159,11 @@ void cCube::TurnTop (int slice)
     for (_CellsT::iterator i = _cells.begin(); i != _cells.end(); ++i)
     {
         if (i->GetPos().GetY() == y)
-            i->RotateY ();
+            i->RotateY (clockwise);
     }
 }
 
-void cCube::TurnSide (int slice)
+void cCube::TurnSide (int slice, bool clockwise)
 {
     if (slice < 1 || slice > _n)
         throw invalid_argument ("Incorrect slice");
@@ -173,7 +173,7 @@ void cCube::TurnSide (int slice)
     for (_CellsT::iterator i = _cells.begin(); i != _cells.end(); ++i)
     {
         if (i->GetPos().GetZ() == z)
-            i->RotateZ ();
+            i->RotateZ (clockwise);
     }
 }
 

@@ -20,9 +20,9 @@ public:
 
     int operator* (cVector const& o) const;
 
-    void RotateX ();
-    void RotateY ();
-    void RotateZ ();
+    void RotateX (bool clockwise);
+    void RotateY (bool clockwise);
+    void RotateZ (bool clockwise);
 
 private:
     int _x;

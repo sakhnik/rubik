@@ -21,9 +21,9 @@ public:
 
     void Draw (cCanvas& canvas) const;
 
-    void TurnFront (int slice);
-    void TurnTop (int slice);
-    void TurnSide (int slice);
+    void TurnFront (int slice, bool clockwise);
+    void TurnTop (int slice, bool clockwise);
+    void TurnSide (int slice, bool clockwise);
 
 private:
     int _n;
