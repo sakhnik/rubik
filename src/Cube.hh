@@ -21,12 +21,9 @@ public:
 
     void Draw (cCanvas& canvas) const;
 
-    void RotateFront ();
-    void RotateBack ();
-    void RotateLeft ();
-    void RotateRight ();
-    void RotateTop ();
-    void RotateBottom ();
+    void TurnFront (int slice);
+    void TurnTop (int slice);
+    void TurnSide (int slice);
 
 private:
     int _n;
@@ -37,6 +34,8 @@ private:
     _CellsT _cells;
 
     unsigned _Space2Canvas (int coord) const;
+    int _Canvas2Space (unsigned coord) const;
+
     bool _IsFront (cCell const& cell) const;
     bool _IsBack (cCell const& cell) const;
     bool _IsLeft (cCell const& cell) const;

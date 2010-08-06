@@ -16,7 +16,7 @@ int main (int argc, char* argv[])
     try
     {
         cCube cube (3);
-        cube.RotateBottom ();
+        cube.TurnSide (1);
         cCanvas canvas (cube.GetN());
         cube.Draw (canvas);
         canvas.Render ();

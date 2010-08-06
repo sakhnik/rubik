@@ -43,6 +43,11 @@ unsigned cCube::_Space2Canvas (int coord) const
     return (_n + coord - 1) >> 1;
 }
 
+int cCube::_Canvas2Space (unsigned coord) const
+{
+    return (coord << 1) - _n - 1;
+}
+
 bool cCube::_IsFront (cCell const& cell) const
 {
     return cell.GetPos().GetX() == _lo;
@@ -130,57 +135,45 @@ void cCube::Draw (cCanvas& canvas) const
     }
 }
 
-void cCube::RotateFront ()
+void cCube::TurnFront (int slice)
 {
+    if (slice < 1 || slice > _n)
+        throw invalid_argument ("Incorrect slice");
+
+    int x = _Canvas2Space (slice);
+
     for (_CellsT::iterator i = _cells.begin(); i != _cells.end(); ++i)
     {
-        if (_IsFront (*i))
+        if (i->GetPos().GetX() == x)
             i->RotateX ();
     }
 }
 
-void cCube::RotateBack ()
+void cCube::TurnTop (int slice)
 {
-    for (_CellsT::iterator i = _cells.begin(); i != _cells.end(); ++i)
-    {
-        if (_IsBack (*i))
-            i->RotateX ();
-    }
-}
+    if (slice < 1 || slice > _n)
+        throw invalid_argument ("Incorrect slice");
 
-void cCube::RotateLeft ()
-{
-    for (_CellsT::iterator i = _cells.begin(); i != _cells.end(); ++i)
-    {
-        if (_IsLeft (*i))
-            i->RotateZ ();
-    }
-}
+    int y = _Canvas2Space (slice);
 
-void cCube::RotateRight ()
-{
     for (_CellsT::iterator i = _cells.begin(); i != _cells.end(); ++i)
     {
-        if (_IsRight (*i))
-            i->RotateZ ();
-    }
-}
-
-void cCube::RotateTop ()
-{
-    for (_CellsT::iterator i = _cells.begin(); i != _cells.end(); ++i)
-    {
-        if (_IsTop (*i))
+        if (i->GetPos().GetY() == y)
             i->RotateY ();
     }
 }
 
-void cCube::RotateBottom ()
+void cCube::TurnSide (int slice)
 {
+    if (slice < 1 || slice > _n)
+        throw invalid_argument ("Incorrect slice");
+
+    int z = _Canvas2Space (slice);
+
     for (_CellsT::iterator i = _cells.begin(); i != _cells.end(); ++i)
     {
-        if (_IsBottom (*i))
-            i->RotateY ();
+        if (i->GetPos().GetZ() == z)
+            i->RotateZ ();
     }
 }
 
