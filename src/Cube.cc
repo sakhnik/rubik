@@ -9,12 +9,13 @@
 #include "Canvas.hh"
 #include <string>
 #include <stdexcept>
-#include <iostream>
 
 using namespace std;
 
 cCube::cCube (int n)
     : _n (n)
+    , _lo (1 - n)
+    , _hi (n - 1)
 {
     if (n <= 0)
         throw invalid_argument ("n must be greather than 0");
@@ -23,13 +24,13 @@ cCube::cCube (int n)
     cVector j (0, 1, 0);
     cVector k (0, 0, 1);
 
-    for (int x = 1 - n; x <= n - 1; x += 2)
-        for (int y = 1 - n; y <= n - 1; y += 2)
-            for (int z = 1 - n; z <= n - 1; z += 2)
+    for (int x = _lo; x <= _hi; x += 2)
+        for (int y = _lo; y <= _hi; y += 2)
+            for (int z = _lo; z <= _hi; z += 2)
             {
-                if (1 - n < x && x < n - 1 &&
-                    1 - n < y && y < n - 1 &&
-                    1 - n < z && z < n - 1)
+                if (_lo < x && x < _hi &&
+                    _lo < y && y < _hi &&
+                    _lo < z && z < _hi)
                     continue;
                 cVector pos (x, y, z);
                 cCell cell (pos, i, j, k);
@@ -42,60 +43,144 @@ unsigned cCube::_Space2Canvas (int coord) const
     return (_n + coord - 1) >> 1;
 }
 
+bool cCube::_IsFront (cCell const& cell) const
+{
+    return cell.GetPos().GetX() == _lo;
+}
+
+bool cCube::_IsBack (cCell const& cell) const
+{
+    return cell.GetPos().GetX() == _hi;
+}
+
+bool cCube::_IsLeft (cCell const& cell) const
+{
+    return cell.GetPos().GetZ() == _lo;
+}
+
+bool cCube::_IsRight (cCell const& cell) const
+{
+    return cell.GetPos().GetZ() == _hi;
+}
+
+bool cCube::_IsTop (cCell const& cell) const
+{
+    return cell.GetPos().GetY() == _lo;
+}
+
+bool cCube::_IsBottom (cCell const& cell) const
+{
+    return cell.GetPos().GetY() == _hi;
+}
+
 void cCube::Draw (cCanvas& canvas) const
 {
-    for (size_t i = 0; i != _cells.size(); ++i)
+    for (_CellsT::const_iterator i = _cells.begin(); i != _cells.end(); ++i)
     {
-        cCell const& cell = _cells[i];
+        cCell const& cell = *i;
         cVector const& pos = cell.GetPos();
-        if (pos.GetX() == 1 - _n)
+        if (_IsFront (cell))
         {
             cVector view (1, 0, 0);
             Colour colour = cell.GetColour (view);
-            canvas.SetPixel (_n + _Space2Canvas (pos.GetY()),
-                             _n + _Space2Canvas (pos.GetZ()),
+            canvas.SetPixel (_n + _Space2Canvas (pos.GetZ()),
+                             _n + _Space2Canvas (pos.GetY()),
                              colour);
         }
-        if (pos.GetY() == 1 - _n)
+        if (_IsTop (cell))
         {
             cVector view (0, 1, 0);
             Colour colour = cell.GetColour (view);
-            canvas.SetPixel (_Space2Canvas (pos.GetX()),
-                             _n + _Space2Canvas (pos.GetZ()),
+            canvas.SetPixel (_n + _Space2Canvas (pos.GetZ()),
+                             2*_n + _Space2Canvas (pos.GetX()),
                              colour);
         }
-        if (pos.GetZ() == 1 - _n)
+        if (_IsLeft (cell))
         {
             cVector view (0, 0, 1);
             Colour colour = cell.GetColour (view);
-            canvas.SetPixel (_n + _Space2Canvas (pos.GetX()),
-                             _Space2Canvas (pos.GetY()),
+            canvas.SetPixel (_hi - _Space2Canvas (pos.GetX()),
+                             _n + _Space2Canvas (pos.GetY()),
                              colour);
         }
-        if (pos.GetX() == _n - 1)
+        if (_IsBack (cell))
         {
             cVector view (-1, 0, 0);
             Colour colour = cell.GetColour (view);
-            canvas.SetPixel (3*_n + _Space2Canvas (pos.GetY()),
-                             _n + _Space2Canvas (pos.GetZ()),
+            canvas.SetPixel (3*_n + _hi - _Space2Canvas (pos.GetZ()),
+                             _n + _Space2Canvas (pos.GetY()),
                              colour);
         }
-        if (pos.GetY() == _n - 1)
+        if (_IsBottom (cell))
         {
             cVector view (0, -1, 0);
             Colour colour = cell.GetColour (view);
-            canvas.SetPixel (2*_n + _Space2Canvas (pos.GetX()),
-                             _n + _Space2Canvas (pos.GetZ()),
+            canvas.SetPixel (_n + _Space2Canvas (pos.GetZ()),
+                             _hi - _Space2Canvas (pos.GetX()),
                              colour);
         }
-        if (pos.GetZ() == _n - 1)
+        if (_IsRight (cell))
         {
             cVector view (0, 0, -1);
             Colour colour = cell.GetColour (view);
-            canvas.SetPixel (_n + _Space2Canvas (pos.GetX()),
-                             2*_n + _Space2Canvas (pos.GetY()),
+            canvas.SetPixel (2*_n + _Space2Canvas (pos.GetX()),
+                             1*_n + _Space2Canvas (pos.GetY()),
                              colour);
         }
+    }
+}
+
+void cCube::RotateFront ()
+{
+    for (_CellsT::iterator i = _cells.begin(); i != _cells.end(); ++i)
+    {
+        if (_IsFront (*i))
+            i->RotateX ();
+    }
+}
+
+void cCube::RotateBack ()
+{
+    for (_CellsT::iterator i = _cells.begin(); i != _cells.end(); ++i)
+    {
+        if (_IsBack (*i))
+            i->RotateX ();
+    }
+}
+
+void cCube::RotateLeft ()
+{
+    for (_CellsT::iterator i = _cells.begin(); i != _cells.end(); ++i)
+    {
+        if (_IsLeft (*i))
+            i->RotateZ ();
+    }
+}
+
+void cCube::RotateRight ()
+{
+    for (_CellsT::iterator i = _cells.begin(); i != _cells.end(); ++i)
+    {
+        if (_IsRight (*i))
+            i->RotateZ ();
+    }
+}
+
+void cCube::RotateTop ()
+{
+    for (_CellsT::iterator i = _cells.begin(); i != _cells.end(); ++i)
+    {
+        if (_IsTop (*i))
+            i->RotateY ();
+    }
+}
+
+void cCube::RotateBottom ()
+{
+    for (_CellsT::iterator i = _cells.begin(); i != _cells.end(); ++i)
+    {
+        if (_IsBottom (*i))
+            i->RotateY ();
     }
 }
 

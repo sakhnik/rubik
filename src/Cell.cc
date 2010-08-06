@@ -41,4 +41,28 @@ Colour cCell::GetColour (cVector const& direction) const
     throw runtime_error ("Bug");
 }
 
+void cCell::RotateX ()
+{
+    _pos.RotateX ();
+    _i.RotateX ();
+    _j.RotateX ();
+    _k.RotateX ();
+}
+
+void cCell::RotateY ()
+{
+    _pos.RotateY ();
+    _i.RotateY ();
+    _j.RotateY ();
+    _k.RotateY ();
+}
+
+void cCell::RotateZ ()
+{
+    _pos.RotateZ ();
+    _i.RotateZ ();
+    _j.RotateZ ();
+    _k.RotateZ ();
+}
+
 // vim: set et ts=4 sw=4:

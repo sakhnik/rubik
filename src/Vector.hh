@@ -20,6 +20,10 @@ public:
 
     int operator* (cVector const& o) const;
 
+    void RotateX ();
+    void RotateY ();
+    void RotateZ ();
+
 private:
     int _x;
     int _y;

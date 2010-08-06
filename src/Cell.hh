@@ -22,6 +22,10 @@ public:
 
     Colour GetColour (cVector const& direction) const;
 
+    void RotateX ();
+    void RotateY ();
+    void RotateZ ();
+
 private:
     cVector _pos;
 
