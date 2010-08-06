@@ -45,7 +45,7 @@ unsigned cCube::_Space2Canvas (int coord) const
 
 int cCube::_Canvas2Space (unsigned coord) const
 {
-    return (coord << 1) - _n - 1;
+    return (coord << 1) - _n + 1;
 }
 
 bool cCube::_IsFront (cCell const& cell) const
@@ -137,8 +137,11 @@ void cCube::Draw (cCanvas& canvas) const
 
 void cCube::TurnFront (int slice, bool clockwise)
 {
-    if (slice < 1 || slice > _n)
+    if (slice < -_n || slice > _n - 1)
         throw invalid_argument ("Incorrect slice");
+
+    if (slice < 0)
+        slice += _n;
 
     int x = _Canvas2Space (slice);
 
@@ -151,8 +154,11 @@ void cCube::TurnFront (int slice, bool clockwise)
 
 void cCube::TurnTop (int slice, bool clockwise)
 {
-    if (slice < 1 || slice > _n)
+    if (slice < -_n || slice > _n - 1)
         throw invalid_argument ("Incorrect slice");
+
+    if (slice < 0)
+        slice += _n;
 
     int y = _Canvas2Space (slice);
 
@@ -165,8 +171,11 @@ void cCube::TurnTop (int slice, bool clockwise)
 
 void cCube::TurnSide (int slice, bool clockwise)
 {
-    if (slice < 1 || slice > _n)
+    if (slice < -_n || slice > _n - 1)
         throw invalid_argument ("Incorrect slice");
+
+    if (slice < 0)
+        slice += _n;
 
     int z = _Canvas2Space (slice);
 
