@@ -9,6 +9,7 @@
 #include "Canvas.hh"
 #include <string>
 #include <stdexcept>
+#include <cstdlib>
 
 using namespace std;
 
@@ -183,6 +184,27 @@ void cCube::TurnSide (int slice, bool clockwise)
     {
         if (i->GetPos().GetZ() == z)
             i->RotateZ (clockwise);
+    }
+}
+
+void cCube::Shuffle (unsigned count)
+{
+    for (unsigned i = 0; i != count; ++i)
+    {
+        unsigned slice = rand() % _n;
+        bool clockwise = rand() & 1;
+        switch (rand() % 3)
+        {
+        case 0:
+            TurnFront (slice, clockwise);
+            break;
+        case 1:
+            TurnSide (slice, clockwise);
+            break;
+        case 2:
+            TurnTop (slice, clockwise);
+            break;
+        }
     }
 }
 

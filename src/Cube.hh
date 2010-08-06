@@ -25,6 +25,8 @@ public:
     void TurnTop (int slice, bool clockwise);
     void TurnSide (int slice, bool clockwise);
 
+    void Shuffle (unsigned count);
+
 private:
     int _n;
     int _lo;
