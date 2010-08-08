@@ -63,15 +63,15 @@ int main (int argc, char* argv[])
                 break;
             case 'r':
             case 'R':
-                cube.TurnSide (-1, islower(cmd));
+                cube.TurnSide (-1, !islower(cmd));
                 break;
             case 'b':
             case 'B':
-                cube.TurnTop (-1, islower(cmd));
+                cube.TurnTop (-1, !islower(cmd));
                 break;
             case 'x':
             case 'X':
-                cube.Roll (islower(cmd));
+                cube.Pitch (islower(cmd));
                 break;
             case 'y':
             case 'Y':
@@ -79,8 +79,17 @@ int main (int argc, char* argv[])
                 break;
             case 'z':
             case 'Z':
-                cube.Pitch (islower(cmd));
+                cube.Roll (islower(cmd));
                 break;
+            case 'u':
+                {
+                    unsigned count = 1;
+                    sscanf (move.c_str() + 1, "%d", &count);
+                    int c = cube.Undo (count);
+                    if (c != count)
+                        cout << "Reverted " << c << " moves" << endl;
+                    break;
+                }
             default:
                 cout << "Huh?" << endl;
             }

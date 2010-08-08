@@ -9,6 +9,7 @@
 
 #include "Cell.hh"
 #include <vector>
+#include <stack>
 
 class cCanvas;
 
@@ -31,6 +32,8 @@ public:
     void Yaw (bool clockwise);
     void Pitch (bool clockwise);
 
+    int Undo (unsigned count = 1);
+
 private:
     int _n;
     int _lo;
@@ -39,8 +42,29 @@ private:
     typedef std::vector<cCell> _CellsT;
     _CellsT _cells;
 
+    enum _eTurnCode
+    {
+        _TC_FRONT = 0,
+        _TC_TOP,
+        _TC_SIDE
+    };
+
+    struct _sUndo
+    {
+        _eTurnCode turn_code;
+        int slice;
+        bool clockwise;
+    };
+
+    typedef std::stack<_sUndo> _UndoStackT;
+    _UndoStackT _undo_stack;
+
     unsigned _Space2Canvas (int coord) const;
     int _Canvas2Space (unsigned coord) const;
+
+    void _DoTurnFront (int slice, bool clockwise);
+    void _DoTurnTop (int slice, bool clockwise);
+    void _DoTurnSide (int slice, bool clockwise);
 
     bool _IsFront (cCell const& cell) const;
     bool _IsBack (cCell const& cell) const;

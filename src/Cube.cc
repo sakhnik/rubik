@@ -145,12 +145,20 @@ void cCube::TurnFront (int slice, bool clockwise)
     if (slice < 0)
         slice += _n;
 
+    _DoTurnFront (slice, clockwise);
+
+    _sUndo undo = { _TC_FRONT, slice, !clockwise };
+    _undo_stack.push (undo);
+}
+
+void cCube::_DoTurnFront (int slice, bool clockwise)
+{
     int z = -_Canvas2Space (slice);
 
     for (_CellsT::iterator i = _cells.begin(); i != _cells.end(); ++i)
     {
         if (i->GetPos().GetZ() == z)
-            i->RotateZ (clockwise);
+            i->RotateZ (!clockwise);
     }
 }
 
@@ -162,6 +170,14 @@ void cCube::TurnTop (int slice, bool clockwise)
     if (slice < 0)
         slice += _n;
 
+    _DoTurnTop (slice, clockwise);
+
+    _sUndo undo = { _TC_TOP, slice, !clockwise };
+    _undo_stack.push (undo);
+}
+
+void cCube::_DoTurnTop (int slice, bool clockwise)
+{
     int y = _Canvas2Space (slice);
 
     for (_CellsT::iterator i = _cells.begin(); i != _cells.end(); ++i)
@@ -179,6 +195,14 @@ void cCube::TurnSide (int slice, bool clockwise)
     if (slice < 0)
         slice += _n;
 
+    _DoTurnSide (slice, clockwise);
+
+    _sUndo undo = { _TC_SIDE, slice, !clockwise };
+    _undo_stack.push (undo);
+}
+
+void cCube::_DoTurnSide (int slice, bool clockwise)
+{
     int x = _Canvas2Space (slice);
 
     for (_CellsT::iterator i = _cells.begin(); i != _cells.end(); ++i)
@@ -231,6 +255,33 @@ void cCube::Pitch (bool clockwise)
     {
         i->RotateX (clockwise);
     }
+}
+
+int cCube::Undo (unsigned count)
+{
+    for (unsigned i = 0; i != count; ++i)
+    {
+        if (_undo_stack.empty())
+            return i;
+
+        _sUndo const& undo = _undo_stack.top();
+        switch (undo.turn_code)
+        {
+        case _TC_FRONT:
+            _DoTurnFront (undo.slice, undo.clockwise);
+            break;
+        case _TC_TOP:
+            _DoTurnTop (undo.slice, undo.clockwise);
+            break;
+        case _TC_SIDE:
+            _DoTurnSide (undo.slice, undo.clockwise);
+            break;
+        default:
+            throw runtime_error ("Unsupported turn code for undo");
+        }
+        _undo_stack.pop ();
+    }
+    return count;
 }
 
 // vim: set et ts=4 sw=4:
