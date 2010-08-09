@@ -47,6 +47,11 @@ int main (int argc, char* argv[])
                 sscanf (move.c_str() + 1, "%d", &splice);
                 cube.TurnFront (splice, islower(cmd));
                 break;
+            case 'b':
+            case 'B':
+                sscanf (move.c_str() + 1, "%d", &splice);
+                cube.TurnFront (-1, !islower(cmd));
+                break;
             case 's':
             case 'S':
                 sscanf (move.c_str() + 1, "%d", &splice);
@@ -65,8 +70,8 @@ int main (int argc, char* argv[])
             case 'R':
                 cube.TurnSide (-1, !islower(cmd));
                 break;
-            case 'b':
-            case 'B':
+            case 'd':
+            case 'D':
                 cube.TurnTop (-1, !islower(cmd));
                 break;
             case 'x':

@@ -75,7 +75,7 @@ bool cCube::_IsTop (cCell const& cell) const
     return cell.GetPos().GetY() == _lo;
 }
 
-bool cCube::_IsBottom (cCell const& cell) const
+bool cCube::_IsDown (cCell const& cell) const
 {
     return cell.GetPos().GetY() == _hi;
 }
@@ -118,7 +118,7 @@ void cCube::Draw (cCanvas& canvas) const
                              _n + _Space2Canvas (pos.GetY()),
                              colour);
         }
-        if (_IsBottom (cell))
+        if (_IsDown (cell))
         {
             cVector view (0, -1, 0);
             Colour colour = cell.GetColour (view);

@@ -71,7 +71,7 @@ private:
     bool _IsLeft (cCell const& cell) const;
     bool _IsRight (cCell const& cell) const;
     bool _IsTop (cCell const& cell) const;
-    bool _IsBottom (cCell const& cell) const;
+    bool _IsDown (cCell const& cell) const;
 };
 
 // vim: set et ts=4 sw=4:
