@@ -1,9 +1,28 @@
 
-Rubik cube in terminal
-======================
+Rubik's cube in terminal
+========================
                      by Anatoli Sakhnik.
 
-TODO
+This is an implementation of Rubik's cube puzzle
+(http://en.wikipedia.org/wiki/Rubik_cube) for linux terminal.
 
-DEPENDENCIES
-  TODO
+The idea is to print all the faces on a flat cube fold:
+     T          top
+    LFRB        left,front,right,back
+     D          down
+
+Turns are performed by entering face name, and optional slice number.
+Small letters designate clockwise rotation, capitals are used
+for the opposite direction.
+
+
+FUTURE
+------
+
+This was a week-end project, so it's unclear. Possible ways for improvement:
+  * ncurses interface
+  * automatic solver
+
+
+Anatoli Sakhnik,
+Kyiv 2010
