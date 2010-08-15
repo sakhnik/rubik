@@ -14,6 +14,19 @@
 
 using namespace std;
 
+// To perform turns simply, we should have center of every face in
+// the origin of system of coordinates. Thus, for a n-cube, coordinates
+// would be in the range [-n/2 .. n/2]. To work with integer numbers,
+// we use doulbed coordinates, thus translating cells to
+// [_lo, _lo + 2 .. _hi]
+//
+// The axis are oriented in the following way (right threesome):
+//
+//     y│
+//      │
+//      └─────
+//    z╱     x
+//
 cCube::cCube (int n)
     : _n (n)
     , _lo (1 - n)
@@ -22,14 +35,17 @@ cCube::cCube (int n)
     if (n <= 0)
         throw invalid_argument ("n must be greather than 0");
 
+    // Initially all the cells are oriented in the same direction
     cVector i (1, 0, 0);
     cVector j (0, 1, 0);
     cVector k (0, 0, 1);
 
+    // Iterate over all the cells in a cube
     for (int x = _lo; x <= _hi; x += 2)
         for (int y = _lo; y <= _hi; y += 2)
             for (int z = _lo; z <= _hi; z += 2)
             {
+                // Ignore inner cells, since they won't be ever visible
                 if (_lo < x && x < _hi &&
                     _lo < y && y < _hi &&
                     _lo < z && z < _hi)
@@ -40,11 +56,13 @@ cCube::cCube (int n)
             }
 }
 
+// Translate coordinates: [_lo, _lo + 2 .. _hi] -> [0 .. n-1]
 unsigned cCube::_Space2Canvas (int coord) const
 {
     return (_n + coord - 1) >> 1;
 }
 
+// Translate coordinates: [0 .. n-1] -> [_lo, _lo + 2 .. _hi]
 int cCube::_Canvas2Space (unsigned coord) const
 {
     return (coord << 1) - _n + 1;
@@ -86,8 +104,14 @@ void cCube::Draw (cCanvas& canvas) const
     {
         cCell const& cell = *i;
         cVector const& pos = cell.GetPos();
+        // Put every cell on its place in the canvas with the outer
+        // color.
         if (_IsFront (cell))
         {
+            // Front cells are in the center:
+            //  0
+            // 0X00
+            //  0
             cVector view (0, 0, -1);
             Colour colour = cell.GetColour (view);
             canvas.SetPixel (_n + _Space2Canvas (pos.GetX()),
@@ -96,6 +120,10 @@ void cCube::Draw (cCanvas& canvas) const
         }
         if (_IsTop (cell))
         {
+            // Top face
+            //  X
+            // 0000
+            //  0
             cVector view (0, 1, 0);
             Colour colour = cell.GetColour (view);
             canvas.SetPixel (_n + _Space2Canvas (pos.GetX()),
@@ -104,6 +132,10 @@ void cCube::Draw (cCanvas& canvas) const
         }
         if (_IsLeft (cell))
         {
+            // Left face
+            //  0
+            // X000
+            //  0
             cVector view (1, 0, 0);
             Colour colour = cell.GetColour (view);
             canvas.SetPixel (_Space2Canvas (pos.GetZ()),
@@ -112,6 +144,10 @@ void cCube::Draw (cCanvas& canvas) const
         }
         if (_IsBack (cell))
         {
+            // Back face
+            //  0
+            // 000X
+            //  0
             cVector view (0, 0, 1);
             Colour colour = cell.GetColour (view);
             canvas.SetPixel (3*_n + _hi - _Space2Canvas (pos.GetX()),
@@ -120,6 +156,10 @@ void cCube::Draw (cCanvas& canvas) const
         }
         if (_IsDown (cell))
         {
+            // Down face
+            //  0
+            // 0000
+            //  X
             cVector view (0, -1, 0);
             Colour colour = cell.GetColour (view);
             canvas.SetPixel (_n + _Space2Canvas (pos.GetX()),
@@ -128,6 +168,10 @@ void cCube::Draw (cCanvas& canvas) const
         }
         if (_IsRight (cell))
         {
+            // Right face
+            //  0
+            // 00X0
+            //  0
             cVector view (-1, 0, 0);
             Colour colour = cell.GetColour (view);
             canvas.SetPixel (2*_n + _hi - _Space2Canvas (pos.GetZ()),
@@ -142,11 +186,14 @@ void cCube::TurnFront (int slice, bool clockwise)
     if (slice < -_n || slice > _n - 1)
         throw invalid_argument ("Incorrect slice");
 
+    // Allow numbering from the back side like in python lists
     if (slice < 0)
         slice += _n;
 
+    // Perform the turn
     _DoTurnFront (slice, clockwise);
 
+    // Push contra action into the undo stack
     _sUndo undo = { _TC_FRONT, slice, !clockwise };
     _undo_stack.push (undo);
 }
@@ -155,6 +202,7 @@ void cCube::_DoTurnFront (int slice, bool clockwise)
 {
     int z = -_Canvas2Space (slice);
 
+    // Rotate only the face selected by slice
     for (_CellsT::iterator i = _cells.begin(); i != _cells.end(); ++i)
     {
         if (i->GetPos().GetZ() == z)
@@ -214,6 +262,7 @@ void cCube::_DoTurnSide (int slice, bool clockwise)
 
 void cCube::Shuffle (unsigned count)
 {
+    // TODO: The shuffle creates undo stack, should this be changed?
     for (unsigned i = 0; i != count; ++i)
     {
         unsigned slice = rand() % _n;
@@ -259,6 +308,7 @@ void cCube::Pitch (bool clockwise)
 
 int cCube::Undo (unsigned count)
 {
+    // Apply the count last undo actions
     for (unsigned i = 0; i != count; ++i)
     {
         if (_undo_stack.empty())

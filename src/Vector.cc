@@ -29,6 +29,10 @@ bool cVector::operator== (cVector const& o) const
 
 void cVector::RotateX (bool clockwise)
 {
+    // Rotation matrix for 90-degree turn CCW is the following:
+    //   |0 -1|
+    //   |1  0|
+    // So this is the matrix product:
     int old_y = _y;
     _y = clockwise ? _z : -_z;
     _z = clockwise ? -old_y : old_y;

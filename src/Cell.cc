@@ -23,6 +23,8 @@ cCell::cCell (cVector const& pos,
 
 Colour cCell::GetColour (cVector const& direction) const
 {
+    // We calculate which edge the given direction points to,
+    // and return the colour assigned to that edge.
     int pi = direction * _i;
     if (pi == 1)
         return Colour::A;
