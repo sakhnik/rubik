@@ -284,4 +284,16 @@ int cCube::Undo (unsigned count)
     return count;
 }
 
+bool cCube::IsComplete () const
+{
+    cCell const& first = _cells.front();
+    for (_CellsT::const_iterator i = _cells.begin();
+         i != _cells.end(); ++i)
+    {
+        if (!i->DirEquals (first))
+            return false;
+    }
+    return true;
+}
+
 // vim: set et ts=4 sw=4:

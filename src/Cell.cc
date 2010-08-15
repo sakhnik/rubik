@@ -65,4 +65,9 @@ void cCell::RotateZ (bool clockwise)
     _k.RotateZ (clockwise);
 }
 
+bool cCell::DirEquals (cCell const& o) const
+{
+    return _i == o._i && _j == o._j && _k == o._k;
+}
+
 // vim: set et ts=4 sw=4:

@@ -23,6 +23,8 @@ int main (int argc, char* argv[])
         while (true)
         {
             cout << endl;
+            if (cube.IsComplete())
+                cout << "Complete!" << endl;
             cube.Draw (canvas);
             canvas.Render ();
             cout << "Move: ";

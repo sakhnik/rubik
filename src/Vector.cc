@@ -22,6 +22,11 @@ int cVector::operator* (cVector const& o) const
     return _x*o._x + _y*o._y + _z*o._z;
 }
 
+bool cVector::operator== (cVector const& o) const
+{
+    return _x == o._x && _y == o._y && _z == o._z;
+}
+
 void cVector::RotateX (bool clockwise)
 {
     int old_y = _y;

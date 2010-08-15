@@ -26,6 +26,8 @@ public:
     void RotateY (bool clockwise);
     void RotateZ (bool clockwise);
 
+    bool DirEquals (cCell const& o) const;
+
 private:
     cVector _pos;
 

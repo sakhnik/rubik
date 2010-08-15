@@ -19,6 +19,7 @@ public:
     int GetZ () const { return _z; }
 
     int operator* (cVector const& o) const;
+    bool operator== (cVector const& o) const;
 
     void RotateX (bool clockwise);
     void RotateY (bool clockwise);

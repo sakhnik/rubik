@@ -8,7 +8,7 @@
 #pragma once
 
 #include "Cell.hh"
-#include <vector>
+#include <list>
 #include <stack>
 
 class cCanvas;
@@ -34,12 +34,14 @@ public:
 
     int Undo (unsigned count = 1);
 
+    bool IsComplete () const;
+
 private:
     int _n;
     int _lo;
     int _hi;
 
-    typedef std::vector<cCell> _CellsT;
+    typedef std::list<cCell> _CellsT;
     _CellsT _cells;
 
     enum _eTurnCode
