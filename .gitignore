@@ -8,3 +8,5 @@ configure
 depcomp
 install-sh
 missing
+COPYING
+INSTALL

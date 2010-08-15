@@ -1,8 +1,8 @@
 AC_PREREQ(2.59)
 
-AC_INIT([rubik],[0.1],[sakhnik@gmail.com])
+AC_INIT([rubik],[1.0],[sakhnik@gmail.com])
 
-AM_INIT_AUTOMAKE([1.9 foreign])
+AM_INIT_AUTOMAKE([1.9])
 
 AC_PROG_CXX
 
