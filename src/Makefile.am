@@ -20,4 +20,5 @@ rubik_SOURCES = Canvas.cc Canvas.hh \
                 Colour.cc Colour.hh \
                 Cube.cc Cube.hh \
                 Vector.cc Vector.hh \
+                Control.cc Control.hh \
                 main.cc

@@ -25,13 +25,19 @@ struct Colour
 {
     enum Type
     {
-        N, A, B, C, D, E, F
+        A = 0,
+        B,
+        C,
+        D,
+        E,
+        F
     } _t;
 
     Colour (Type t) : _t(t) { }
     operator Type () const { return _t; }
 
-    char const* GetChar () const;
+    // Number the colour starting from 1
+    unsigned GetNumber () const;
 
 private:
     template <typename T>

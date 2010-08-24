@@ -22,12 +22,16 @@
 #pragma once
 
 #include "Colour.hh"
-#include <vector>
+
+#include <ncursesw/ncurses.h>
 
 class cCanvas
 {
 public:
-    cCanvas (unsigned n);
+    cCanvas (unsigned n,
+             unsigned y,
+             unsigned x);
+    ~cCanvas ();
 
     void Render () const;
     void SetPixel (unsigned x, unsigned y, Colour colour);
@@ -35,7 +39,7 @@ public:
 private:
     unsigned _width;
     unsigned _height;
-    std::vector<Colour> _pixels;
+    WINDOW* _wnd;
 };
 
 // vim: set et ts=4 sw=4:

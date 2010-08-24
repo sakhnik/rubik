@@ -1,7 +1,7 @@
 //
-// Colour.cc
+// Control.hh
 //
-//     Created: 04.08.2010
+//     Created: 24.08.2010
 //      Author: A. Sakhnik
 //
 // This file is part of Rubik.
@@ -17,15 +17,24 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Rubik.  If not, see <http://www.gnu.org/licenses/>
+// along with Foobar.  If not, see <http://www.gnu.org/licenses/>
 
-#include "Colour.hh"
+#pragma once
 
-using namespace std;
+#include <ncursesw/ncurses.h>
 
-unsigned Colour::GetNumber () const
+class cCube;
+
+class cControl
 {
-    return static_cast<unsigned> (_t) + 1;
-}
+public:
+    cControl ();
+    ~cControl ();
+
+    int Process (cCube& cube);
+
+private:
+    WINDOW* _wnd;
+};
 
 // vim: set et ts=4 sw=4:

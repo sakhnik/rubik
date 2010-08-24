@@ -20,32 +20,39 @@
 // along with Rubik.  If not, see <http://www.gnu.org/licenses/>
 
 #include "Canvas.hh"
-#include <iostream>
+
+#include <stdexcept>
 
 using namespace std;
 
-cCanvas::cCanvas (unsigned n)
+cCanvas::cCanvas (unsigned n,
+                  unsigned y,
+                  unsigned x)
     : _width (n * 4)
     , _height (n * 3)
-    , _pixels (_width * _height, Colour::N)
+    , _wnd (0)
 {
+    _wnd = ::newwin (_height, _width * 2, y, (COLS - 2*_width)/2);
+    if (!_wnd)
+        throw runtime_error ("Couldn't create canvas");
+}
+
+cCanvas::~cCanvas ()
+{
+    ::delwin (_wnd);
 }
 
 void cCanvas::Render () const
 {
-    for (size_t i = 0; i != _pixels.size(); ++i)
-    {
-        char const* str = _pixels[i].GetChar();
-        cout << str;
-        if (i % _width == _width - 1)
-            cout << "\n";
-    }
-    cout << endl;
+    ::wmove (_wnd, 0, 0);
+    ::wrefresh (_wnd);
 }
 
 void cCanvas::SetPixel (unsigned x, unsigned y, Colour colour)
 {
-    _pixels[y * _width + x] = colour;
+    ::wattron (_wnd, COLOR_PAIR (colour.GetNumber ()));
+    ::mvwprintw (_wnd, y, x * 2, "█▌");
+    ::wattroff (_wnd, COLOR_PAIR (colour.GetNumber ()));
 }
 
 // vim: set et ts=4 sw=4:

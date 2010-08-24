@@ -21,101 +21,63 @@
 
 #include "Cube.hh"
 #include "Canvas.hh"
+#include "Control.hh"
+
 #include <iostream>
 #include <cstdlib>
 #include <cstdio>
+#include <locale.h>
+#include <ncursesw/ncurses.h>
 
 using namespace std;
 
 int main (int argc, char* argv[])
 {
     srand ((unsigned)time(NULL));
+    ::setlocale (LC_CTYPE, "");
+
+    WINDOW* main_wnd = ::initscr();
+    if (!main_wnd)
+    {
+        cerr << "Couldn't init screen" << endl;
+        return 1;
+    }
+
+    // Destroy the window automatically
+    struct sScopeExit
+    {
+        ~sScopeExit () { ::endwin (); }
+    } scope_exit;
+
+    if (!::has_colors())
+    {
+        cerr << "Your terminal doesn't support colours" << endl;
+        return 1;
+    }
+
+    ::keypad (main_wnd, TRUE);
+    ::raw ();
+    ::noecho ();
+    ::start_color ();
+    ::init_pair (1, COLOR_RED, COLOR_BLACK);
+    ::init_pair (2, COLOR_BLUE, COLOR_BLACK);
+    ::init_pair (3, COLOR_GREEN, COLOR_BLACK);
+    ::init_pair (4, COLOR_YELLOW, COLOR_BLACK);
+    ::init_pair (5, COLOR_MAGENTA, COLOR_BLACK);
+    ::init_pair (6, COLOR_CYAN, COLOR_BLACK);
+
     try
     {
         cCube cube (3);
-        cCanvas canvas (cube.GetN());
+        cCanvas canvas (cube.GetN(), 5, 0);
+        cControl control;
         while (true)
         {
-            cout << endl;
-            if (cube.IsComplete())
-                cout << "Complete!" << endl;
             cube.Draw (canvas);
             canvas.Render ();
-            cout << "Move: ";
-            string move;
-            cin >> move;
-            if (move.size() < 1)
-                continue;
-            char cmd = move[0];
-            if (cmd == 'q' || cmd == 'Q')
+            if (control.Process (cube))
                 break;
-            int splice (0);
-            switch (cmd)
-            {
-            case '#':
-                {
-                    unsigned count = 20;
-                    sscanf (move.c_str() + 1, "%d", &count);
-                    cube.Shuffle (count);
-                }
-            case 'f':
-            case 'F':
-                sscanf (move.c_str() + 1, "%d", &splice);
-                cube.TurnFront (splice, islower(cmd));
-                break;
-            case 'b':
-            case 'B':
-                sscanf (move.c_str() + 1, "%d", &splice);
-                cube.TurnFront (-1, !islower(cmd));
-                break;
-            case 's':
-            case 'S':
-                sscanf (move.c_str() + 1, "%d", &splice);
-                cube.TurnSide (splice, islower(cmd));
-                break;
-            case 't':
-            case 'T':
-                sscanf (move.c_str() + 1, "%d", &splice);
-                cube.TurnTop (splice, islower(cmd));
-                break;
-            case 'l':
-            case 'L':
-                cube.TurnSide (0, islower(cmd));
-                break;
-            case 'r':
-            case 'R':
-                cube.TurnSide (-1, !islower(cmd));
-                break;
-            case 'd':
-            case 'D':
-                cube.TurnTop (-1, !islower(cmd));
-                break;
-            case 'x':
-            case 'X':
-                cube.Pitch (islower(cmd));
-                break;
-            case 'y':
-            case 'Y':
-                cube.Yaw (islower(cmd));
-                break;
-            case 'z':
-            case 'Z':
-                cube.Roll (islower(cmd));
-                break;
-            case 'u':
-                {
-                    unsigned count = 1;
-                    sscanf (move.c_str() + 1, "%d", &count);
-                    int c = cube.Undo (count);
-                    if (c != count)
-                        cout << "Reverted " << c << " moves" << endl;
-                    break;
-                }
-            default:
-                cout << "Huh?" << endl;
-            }
         }
-        cout << "Good bye!" << endl;
     }
     catch (std::exception const& e)
     {

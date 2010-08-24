@@ -21,7 +21,7 @@ FUTURE
 ------
 
 This was a week-end project, so it's unclear. Possible ways for improvement:
-  * ncurses interface
+  * mouse support
   * automatic solver
 
 

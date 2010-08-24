@@ -1,4 +1,8 @@
-Version 1.0.0 - the 15th of August, 2010
+Version 2.0 - the 24th of August, 2010
+
+  * ncurses interface
+
+Version 1.0 - the 15th of August, 2010
 
   * Very first release, yet pretty usable
   * Simple CLI

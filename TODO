@@ -1,0 +1,11 @@
+Design
+------
+
+* Implement redo
+* Implement mouse support
+* Implement automatic solver
+
+Bugs
+----
+
+* Fix completeness check

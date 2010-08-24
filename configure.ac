@@ -15,11 +15,20 @@ dnl along with Rubik.  If not, see <http://www.gnu.org/licenses/>
 
 AC_PREREQ(2.59)
 
-AC_INIT([rubik],[1.0],[sakhnik@gmail.com])
+AC_INIT([rubik],[2.0],[sakhnik@gmail.com])
 
 AM_INIT_AUTOMAKE([1.9])
 
 AC_PROG_CXX
+
+AC_LANG_PUSH([C++])
+
+AC_CHECK_HEADER(ncursesw/ncurses.h,
+                :,
+                AC_MSG_ERROR([required <ncursesw/ncurses.h> is missing]))
+AC_CHECK_LIB(ncursesw,initscr)
+
+AC_LANG_POP
 
 AC_CONFIG_FILES([Makefile src/Makefile])
 AC_OUTPUT
