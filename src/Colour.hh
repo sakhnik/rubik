@@ -30,7 +30,9 @@ struct Colour
         C,
         D,
         E,
-        F
+        F,
+
+        Undefined
     } _t;
 
     Colour (Type t) : _t(t) { }

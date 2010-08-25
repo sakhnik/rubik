@@ -99,12 +99,8 @@ private:
     void _DoTurnTop (int slice, bool clockwise);
     void _DoTurnSide (int slice, bool clockwise);
 
-    bool _IsFront (cCell const& cell) const;
-    bool _IsBack (cCell const& cell) const;
-    bool _IsLeft (cCell const& cell) const;
-    bool _IsRight (cCell const& cell) const;
-    bool _IsTop (cCell const& cell) const;
-    bool _IsDown (cCell const& cell) const;
+    bool _IsVisible (cCell const& cell,
+                     cVector const& view) const;
 };
 
 // vim: set et ts=4 sw=4:

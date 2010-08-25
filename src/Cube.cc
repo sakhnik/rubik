@@ -21,10 +21,11 @@
 
 #include "Cube.hh"
 #include "Canvas.hh"
+
 #include <string>
 #include <stdexcept>
 #include <cstdlib>
-#include <iostream>
+#include <cassert>
 
 using namespace std;
 
@@ -82,35 +83,12 @@ int cCube::_Canvas2Space (unsigned coord) const
     return (coord << 1) - _n + 1;
 }
 
-bool cCube::_IsFront (cCell const& cell) const
-{
-    return cell.GetPos().GetZ() == _hi;
-}
-
-bool cCube::_IsBack (cCell const& cell) const
-{
-    return cell.GetPos().GetZ() == _lo;
-}
-
-bool cCube::_IsLeft (cCell const& cell) const
-{
-    return cell.GetPos().GetX() == _lo;
-}
-
-bool cCube::_IsRight (cCell const& cell) const
-{
-    return cell.GetPos().GetX() == _hi;
-}
-
-bool cCube::_IsTop (cCell const& cell) const
-{
-    return cell.GetPos().GetY() == _lo;
-}
-
-bool cCube::_IsDown (cCell const& cell) const
-{
-    return cell.GetPos().GetY() == _hi;
-}
+const cVector FRONT_VIEW (0, 0, -1);
+const cVector BACK_VIEW (0, 0, 1);
+const cVector LEFT_VIEW (1, 0, 0);
+const cVector RIGHT_VIEW (-1, 0, 0);
+const cVector TOP_VIEW (0, 1, 0);
+const cVector DOWN_VIEW (0, -1, 0);
 
 void cCube::Draw (cCanvas& canvas) const
 {
@@ -120,74 +98,68 @@ void cCube::Draw (cCanvas& canvas) const
         cVector const& pos = cell.GetPos();
         // Put every cell on its place in the canvas with the outer
         // color.
-        if (_IsFront (cell))
+        if (_IsVisible (cell, FRONT_VIEW))
         {
             // Front cells are in the center:
             //  0
             // 0X00
             //  0
-            cVector view (0, 0, -1);
-            Colour colour = cell.GetColour (view);
+            Colour colour = cell.GetColour (FRONT_VIEW);
             canvas.SetPixel (_n + _Space2Canvas (pos.GetX()),
                              _n + _Space2Canvas (pos.GetY()),
                              colour);
         }
-        if (_IsTop (cell))
+        if (_IsVisible (cell, TOP_VIEW))
         {
             // Top face
             //  X
             // 0000
             //  0
-            cVector view (0, 1, 0);
-            Colour colour = cell.GetColour (view);
+            Colour colour = cell.GetColour (TOP_VIEW);
             canvas.SetPixel (_n + _Space2Canvas (pos.GetX()),
                              _Space2Canvas (pos.GetZ()),
                              colour);
         }
-        if (_IsLeft (cell))
+        if (_IsVisible (cell, LEFT_VIEW))
         {
             // Left face
             //  0
             // X000
             //  0
-            cVector view (1, 0, 0);
-            Colour colour = cell.GetColour (view);
+            Colour colour = cell.GetColour (LEFT_VIEW);
             canvas.SetPixel (_Space2Canvas (pos.GetZ()),
                              _n + _Space2Canvas (pos.GetY()),
                              colour);
         }
-        if (_IsBack (cell))
+        if (_IsVisible (cell, BACK_VIEW))
         {
             // Back face
             //  0
             // 000X
             //  0
-            cVector view (0, 0, 1);
-            Colour colour = cell.GetColour (view);
+            Colour colour = cell.GetColour (BACK_VIEW);
             canvas.SetPixel (3*_n + _hi - _Space2Canvas (pos.GetX()),
                              _n + _Space2Canvas (pos.GetY()),
                              colour);
         }
-        if (_IsDown (cell))
+        if (_IsVisible (cell, DOWN_VIEW))
         {
             // Down face
             //  0
             // 0000
             //  X
-            cVector view (0, -1, 0);
-            Colour colour = cell.GetColour (view);
+            Colour colour = cell.GetColour (DOWN_VIEW);
             canvas.SetPixel (_n + _Space2Canvas (pos.GetX()),
                              2*_n + _hi - _Space2Canvas (pos.GetZ()),
                              colour);
         }
-        if (_IsRight (cell))
+        if (_IsVisible (cell, RIGHT_VIEW))
         {
             // Right face
             //  0
             // 00X0
             //  0
-            cVector view (-1, 0, 0);
-            Colour colour = cell.GetColour (view);
+            Colour colour = cell.GetColour (RIGHT_VIEW);
             canvas.SetPixel (2*_n + _hi - _Space2Canvas (pos.GetZ()),
                              1*_n + _Space2Canvas (pos.GetY()),
                              colour);
@@ -348,13 +320,60 @@ int cCube::Undo (unsigned count)
     return count;
 }
 
+bool cCube::_IsVisible (cCell const& cell,
+                        cVector const& view) const
+{
+    assert (abs(view.GetX()) + abs(view.GetY()) + abs(view.GetZ()) == 1 ||
+            "View should be a 1 vector");
+
+    cVector const& pos = cell.GetPos ();
+    return (!view.GetX() || pos.GetX() == _lo * view.GetX()) &&
+           (!view.GetY() || pos.GetY() == _lo * view.GetY()) &&
+           (!view.GetZ() || pos.GetZ() == _lo * view.GetZ());
+}
+
+static bool _CheckFaceColour (cCell const& cell,
+                              Colour& face_colour,
+                              cVector const& view)
+{
+    Colour cell_colour = cell.GetColour (view);
+    if (face_colour == Colour::Undefined)
+        face_colour = cell_colour;
+    else if (face_colour != cell_colour)
+        return false;
+    return true;
+}
+
 bool cCube::IsComplete () const
 {
-    cCell const& first = _cells.front();
+    Colour front = Colour::Undefined;
+    Colour back = Colour::Undefined;
+    Colour left = Colour::Undefined;
+    Colour right = Colour::Undefined;
+    Colour top = Colour::Undefined;
+    Colour down = Colour::Undefined;
+
     for (_CellsT::const_iterator i = _cells.begin();
          i != _cells.end(); ++i)
     {
-        if (!i->DirEquals (first))
+        cCell const& cell = *i;
+        if (_IsVisible (cell, FRONT_VIEW) &&
+            !_CheckFaceColour (cell, front, FRONT_VIEW))
+            return false;
+        if (_IsVisible (cell, BACK_VIEW) &&
+            !_CheckFaceColour (cell, back, BACK_VIEW))
+            return false;
+        if (_IsVisible (cell, LEFT_VIEW) &&
+            !_CheckFaceColour (cell, left, LEFT_VIEW))
+            return false;
+        if (_IsVisible (cell, RIGHT_VIEW) &&
+            !_CheckFaceColour (cell, right, RIGHT_VIEW))
+            return false;
+        if (_IsVisible (cell, TOP_VIEW) &&
+            !_CheckFaceColour (cell, top, TOP_VIEW))
+            return false;
+        if (_IsVisible (cell, DOWN_VIEW) &&
+            !_CheckFaceColour (cell, down, DOWN_VIEW))
             return false;
     }
     return true;
