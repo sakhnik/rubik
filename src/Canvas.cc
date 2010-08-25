@@ -27,7 +27,7 @@ using namespace std;
 cCanvas::cCanvas (unsigned n)
     : _width (n * 4)
     , _height (n * 3)
-    , _pixels (_width * _height, Colour::N)
+    , _pixels (_width * _height, Colour::Undefined)
 {
 }
 

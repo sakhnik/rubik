@@ -27,7 +27,7 @@ char const* Colour::GetChar () const
 {
     switch (_t)
     {
-    case N: return "  ";
+    case Undefined: return "  ";
     case A: return "\033[49;31m█▌\033[0m";
     case B: return "\033[49;32m█▌\033[0m";
     case C: return "\033[49;33m█▌\033[0m";

@@ -25,7 +25,14 @@ struct Colour
 {
     enum Type
     {
-        N, A, B, C, D, E, F
+        A = 0,
+        B,
+        C,
+        D,
+        E,
+        F,
+
+        Undefined
     } _t;
 
     Colour (Type t) : _t(t) { }
