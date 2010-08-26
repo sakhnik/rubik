@@ -23,10 +23,23 @@ AC_PROG_CXX
 
 AC_LANG_PUSH([C++])
 
-AC_CHECK_HEADER(ncursesw/ncurses.h,
-                :,
-                AC_MSG_ERROR([required <ncursesw/ncurses.h> is missing]))
-AC_CHECK_LIB(ncursesw,initscr)
+case "$host" in
+  *-*-mingw*)
+    os_win32=yes
+    AC_CHECK_HEADER(curses.h,
+                    :,
+                    AC_MSG_ERROR([required <curses.h> is missing]))
+    AC_CHECK_LIB(pdcurses.dll,initscr)
+    ;;
+  *)
+    os_win32=no
+    AC_CHECK_HEADER(ncursesw/ncurses.h,
+                    :,
+                    AC_MSG_ERROR([required <ncursesw/ncurses.h> is missing]))
+    AC_CHECK_LIB(ncursesw,initscr)
+    ;;
+esac
+AM_CONDITIONAL(OS_WIN32, [test "$os_win32" == "yes"])
 
 AC_LANG_POP
 

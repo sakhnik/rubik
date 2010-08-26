@@ -27,7 +27,12 @@
 #include <cstdlib>
 #include <cstdio>
 #include <locale.h>
-#include <ncursesw/ncurses.h>
+#include <time.h>
+#ifndef WIN32
+#  include <ncursesw/ncurses.h>
+#else
+#  include <curses.h>
+#endif //WIN32
 
 using namespace std;
 

@@ -21,7 +21,11 @@
 
 #pragma once
 
-#include <ncursesw/ncurses.h>
+#ifndef WIN32
+#  include <ncursesw/ncurses.h>
+#else
+#  include <curses.h>
+#endif //WIN32
 
 class cCube;
 
