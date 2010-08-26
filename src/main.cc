@@ -24,16 +24,66 @@
 #include <iostream>
 #include <cstdlib>
 #include <cstdio>
+#include <getopt.h>
 
 using namespace std;
+
+void Usage ()
+{
+    cerr << "rubik [--size|-s n]\n";
+    cerr << "Play Rubik's cube of size n (default 3)" << endl;
+}
 
 int main (int argc, char* argv[])
 {
     srand ((unsigned)time(NULL));
+
+    unsigned size (3);
+
+    while (true)
+    {
+        static struct option long_options[] =
+        {
+            { "help", no_argument, 0, 'h' },
+            { "size", required_argument, 0, 's' },
+            { 0, 0, 0, 0 }
+        };
+
+        int option_index = 0;
+        int c = ::getopt_long (argc, argv, "h?s:",
+                               long_options, &option_index);
+        if (c == -1)
+            break;
+
+        switch (c)
+        {
+        case 'h':
+        case '?':
+            Usage ();
+            return 1;
+        case 's':
+            if (1 != sscanf (optarg, "%u", &size))
+            {
+                cerr << "Invalid size `" << optarg << "'" << endl;
+                return 1;
+            }
+            break;
+        default:
+            return 1;
+        }
+    }
+
+    if (optind < argc)
+    {
+        cerr << "Unexpected arguments" << endl;
+        return 1;
+    }
+
     try
     {
-        cCube cube (3);
+        cCube cube (size);
         cCanvas canvas (cube.GetN());
+
         while (true)
         {
             cout << endl;
