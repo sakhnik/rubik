@@ -41,6 +41,8 @@ public:
 
 private:
     WINDOW* _wnd;
+    int _start_y;
+    int _start_x;
 
     int _ProcessMouse (cCube& cube,
                        cCanvas const& canvas);

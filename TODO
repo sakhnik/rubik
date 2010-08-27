@@ -2,7 +2,6 @@ Design
 ------
 
 * Redo
-* Mouse support
 * Automatic solver
 * Themes
 * Control customization
@@ -10,3 +9,4 @@ Design
 Bugs
 ----
 
+* Mouse doesn't work right after start

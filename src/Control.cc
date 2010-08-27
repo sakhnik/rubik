@@ -29,6 +29,8 @@ using namespace std;
 
 cControl::cControl ()
     : _wnd (::newwin (3, COLS, 0, 0))
+    , _start_y (-1)
+    , _start_x (-1)
 {
     if (!_wnd)
         throw runtime_error ("Couldn't create control window");
@@ -146,18 +148,27 @@ int cControl::_ProcessMouse (cCube& cube, cCanvas const& canvas)
     if (::getmouse (&event) != OK)
         return 0;
 
+    // Transform screen coordinates into canvas window window
     if (!::wmouse_trafo (canvas.GetWnd(), &event.y, &event.x, FALSE))
         return 0;
 
     if (event.bstate & BUTTON1_PRESSED)
     {
-        ::mvwprintw (_wnd, 2, 0, "Press Y:%d  X:%d    ", event.y, event.x);
-        ::wrefresh (_wnd);
+        _start_y = event.y;
+        _start_x = event.x;
     }
-    if (event.bstate & BUTTON1_RELEASED)
+
+    if ((event.bstate & BUTTON1_RELEASED) &&
+        _start_x != -1 &&
+        _start_y != -1)
     {
-        ::mvwprintw (_wnd, 2, 0, "Release Y:%d  X:%d   ", event.y, event.x);
-        ::wrefresh (_wnd);
+        // Each facet consists of two cells horizontally
+        int res = cube.TrackTurn (_start_x / 2,
+                                  _start_y,
+                                  event.x / 2,
+                                  event.y);
+        _start_y = -1;
+        _start_x = -1;
     }
     return 0;
 }

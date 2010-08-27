@@ -60,6 +60,12 @@ public:
     // Check if the cube is complete
     bool IsComplete () const;
 
+    // Given mouse pointer stroke, manipulate the cube.
+    int TrackTurn (int start_x,
+                   int start_y,
+                   int end_x,
+                   int end_y);
+
 private:
     int _n;
     // Lowest coordinate of a cell
