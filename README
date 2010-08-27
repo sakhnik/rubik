@@ -16,6 +16,13 @@ in a very similar manner to to what solving algorithm descriptions use.
 Small letters designate clockwise rotation, capitals are used
 for the opposite direction.
 
+View at the cube can be changed by rotating around corresponding axes:
+
+       y│                x/X  pitch forward/backward
+        │                y/Y  yaw right/left
+        └─────           z/Z  bank right/left
+      z╱     x
+
 
 FUTURE
 ------
