@@ -40,6 +40,8 @@ public:
     void Render () const;
     void SetPixel (unsigned x, unsigned y, Colour colour);
 
+    WINDOW const* GetWnd () const { return _wnd; }
+
 private:
     unsigned _width;
     unsigned _height;

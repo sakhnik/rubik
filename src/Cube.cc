@@ -379,4 +379,74 @@ bool cCube::IsComplete () const
     return true;
 }
 
+int cCube::TrackTurn (int start_x,
+                      int start_y,
+                      int end_x,
+                      int end_y)
+{
+    // Movement vector
+    int dx = end_x - start_x;
+    int dy = end_y - start_y;
+
+    // No movement gives no result
+    if (dx == 0 && dy == 0)
+        return -1;
+
+    // We expect only parallel moves
+    if (dx != 0 && dy != 0)
+        return -2;
+
+    // Analyze horizontal strokes
+    if (dy == 0)
+    {
+        // Quadrant (quotient) defines direction of the turn, and
+        // the rest defines slice to turn.
+        unsigned q_y = start_y / _n;
+        switch (q_y)
+        {
+        case 0:
+            TurnFront (_n - 1 - start_y % _n,
+                       start_x < end_x);
+            return 0;
+        case 1:
+            TurnTop (start_y % _n,
+                     start_x > end_x);
+            return 0;
+        case 2:
+            TurnFront (start_y % _n,
+                       start_x > end_x);
+            return 0;
+        }
+        return -1;
+    }
+
+    // Analyze vertical strokes
+    if (dx == 0)
+    {
+        unsigned q_x = start_x / _n;
+        switch (q_x)
+        {
+        case 0:
+            TurnFront (_n - 1 - start_x % _n,
+                       start_y > end_y);
+            return 0;
+        case 1:
+            TurnSide (start_x % _n,
+                      start_y < end_y);
+            return 0;
+        case 2:
+            TurnFront (start_x % _n,
+                       start_y < end_y);
+            return 0;
+        case 3:
+            TurnSide (_n - 1 - start_x % _n,
+                      start_y > end_y);
+            return 0;
+        }
+        return -1;
+    }
+
+    return -1;
+}
+
 // vim: set et ts=4 sw=4:

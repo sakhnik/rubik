@@ -1,10 +1,12 @@
 Design
 ------
 
-* Implement redo
-* Implement mouse support
-* Implement automatic solver
+* Redo
+* Automatic solver
+* Themes
+* Control customization
 
 Bugs
 ----
 
+* Mouse doesn't work right after start

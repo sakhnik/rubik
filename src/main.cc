@@ -108,7 +108,7 @@ int main (int argc, char* argv[])
         return 1;
     }
 
-    ::keypad (main_wnd, TRUE);
+    ::keypad (stdscr, TRUE);
     ::raw ();
     ::noecho ();
     ::start_color ();
@@ -128,7 +128,7 @@ int main (int argc, char* argv[])
         {
             cube.Draw (canvas);
             canvas.Render ();
-            if (control.Process (cube))
+            if (control.Process (cube, canvas))
                 break;
         }
     }

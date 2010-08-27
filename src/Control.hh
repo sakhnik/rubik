@@ -28,6 +28,7 @@
 #endif //WIN32
 
 class cCube;
+class cCanvas;
 
 class cControl
 {
@@ -35,10 +36,16 @@ public:
     cControl ();
     ~cControl ();
 
-    int Process (cCube& cube);
+    int Process (cCube& cube,
+                 cCanvas const& canvas);
 
 private:
     WINDOW* _wnd;
+    int _start_y;
+    int _start_x;
+
+    int _ProcessMouse (cCube& cube,
+                       cCanvas const& canvas);
 };
 
 // vim: set et ts=4 sw=4:

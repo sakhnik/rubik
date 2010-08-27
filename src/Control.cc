@@ -21,6 +21,7 @@
 
 #include "Control.hh"
 #include "Cube.hh"
+#include "Canvas.hh"
 
 #include <stdexcept>
 
@@ -28,9 +29,14 @@ using namespace std;
 
 cControl::cControl ()
     : _wnd (::newwin (3, COLS, 0, 0))
+    , _start_y (-1)
+    , _start_x (-1)
 {
     if (!_wnd)
         throw runtime_error ("Couldn't create control window");
+
+    ::mousemask (BUTTON1_PRESSED | BUTTON1_RELEASED, 0);
+    ::keypad (_wnd, TRUE);
 }
 
 cControl::~cControl ()
@@ -38,7 +44,8 @@ cControl::~cControl ()
     ::delwin (_wnd);
 }
 
-int cControl::Process (cCube& cube)
+int cControl::Process (cCube& cube,
+                       cCanvas const& canvas)
 {
     ::mvwprintw (_wnd, 0, 0, cube.IsComplete () ? "Complete!"
                                                 : "         ");
@@ -53,6 +60,9 @@ int cControl::Process (cCube& cube)
         int ch = ::wgetch (_wnd);
         if (ch == 'q' || ch == 'Q')
             return -1;
+
+        if (ch == KEY_MOUSE)
+            return _ProcessMouse (cube, canvas);
 
         // Stack first digits together for repetition
         if (::isdigit (ch) && count < 999)
@@ -130,6 +140,37 @@ int cControl::Process (cCube& cube)
             return 0;
         }
     }
+}
+
+int cControl::_ProcessMouse (cCube& cube, cCanvas const& canvas)
+{
+    MEVENT event;
+    if (::getmouse (&event) != OK)
+        return 0;
+
+    // Transform screen coordinates into canvas window window
+    if (!::wmouse_trafo (canvas.GetWnd(), &event.y, &event.x, FALSE))
+        return 0;
+
+    if (event.bstate & BUTTON1_PRESSED)
+    {
+        _start_y = event.y;
+        _start_x = event.x;
+    }
+
+    if ((event.bstate & BUTTON1_RELEASED) &&
+        _start_x != -1 &&
+        _start_y != -1)
+    {
+        // Each facet consists of two cells horizontally
+        int res = cube.TrackTurn (_start_x / 2,
+                                  _start_y,
+                                  event.x / 2,
+                                  event.y);
+        _start_y = -1;
+        _start_x = -1;
+    }
+    return 0;
 }
 
 // vim: set et ts=4 sw=4:

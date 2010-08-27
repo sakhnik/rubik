@@ -27,7 +27,7 @@
 class cVector
 {
 public:
-    cVector (int x, int y, int z);
+    cVector (int x = 0, int y = 0, int z = 0);
 
     int GetX () const { return _x; }
     int GetY () const { return _y; }
