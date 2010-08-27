@@ -21,6 +21,7 @@
 
 #include "Control.hh"
 #include "Cube.hh"
+#include "Canvas.hh"
 
 #include <stdexcept>
 
@@ -31,6 +32,9 @@ cControl::cControl ()
 {
     if (!_wnd)
         throw runtime_error ("Couldn't create control window");
+
+    ::mousemask (BUTTON1_PRESSED | BUTTON1_RELEASED, 0);
+    ::keypad (_wnd, TRUE);
 }
 
 cControl::~cControl ()
@@ -38,7 +42,8 @@ cControl::~cControl ()
     ::delwin (_wnd);
 }
 
-int cControl::Process (cCube& cube)
+int cControl::Process (cCube& cube,
+                       cCanvas const& canvas)
 {
     ::mvwprintw (_wnd, 0, 0, cube.IsComplete () ? "Complete!"
                                                 : "         ");
@@ -53,6 +58,9 @@ int cControl::Process (cCube& cube)
         int ch = ::wgetch (_wnd);
         if (ch == 'q' || ch == 'Q')
             return -1;
+
+        if (ch == KEY_MOUSE)
+            return _ProcessMouse (cube, canvas);
 
         // Stack first digits together for repetition
         if (::isdigit (ch) && count < 999)
@@ -130,6 +138,28 @@ int cControl::Process (cCube& cube)
             return 0;
         }
     }
+}
+
+int cControl::_ProcessMouse (cCube& cube, cCanvas const& canvas)
+{
+    MEVENT event;
+    if (::getmouse (&event) != OK)
+        return 0;
+
+    if (!::wmouse_trafo (canvas.GetWnd(), &event.y, &event.x, FALSE))
+        return 0;
+
+    if (event.bstate & BUTTON1_PRESSED)
+    {
+        ::mvwprintw (_wnd, 2, 0, "Press Y:%d  X:%d    ", event.y, event.x);
+        ::wrefresh (_wnd);
+    }
+    if (event.bstate & BUTTON1_RELEASED)
+    {
+        ::mvwprintw (_wnd, 2, 0, "Release Y:%d  X:%d   ", event.y, event.x);
+        ::wrefresh (_wnd);
+    }
+    return 0;
 }
 
 // vim: set et ts=4 sw=4:
