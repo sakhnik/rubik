@@ -89,38 +89,38 @@ int main (int argc, char* argv[])
         return 1;
     }
 
-    WINDOW* main_wnd = ::initscr();
-    if (!main_wnd)
-    {
-        cerr << "Couldn't init screen" << endl;
-        return 1;
-    }
-
-    // Destroy the window automatically
-    struct sScopeExit
-    {
-        ~sScopeExit () { ::endwin (); }
-    } scope_exit;
-
-    if (!::has_colors())
-    {
-        cerr << "Your terminal doesn't support colours" << endl;
-        return 1;
-    }
-
-    ::keypad (stdscr, TRUE);
-    ::raw ();
-    ::noecho ();
-    ::start_color ();
-    ::init_pair (1, COLOR_RED, COLOR_BLACK);
-    ::init_pair (2, COLOR_BLUE, COLOR_BLACK);
-    ::init_pair (3, COLOR_GREEN, COLOR_BLACK);
-    ::init_pair (4, COLOR_YELLOW, COLOR_BLACK);
-    ::init_pair (5, COLOR_MAGENTA, COLOR_BLACK);
-    ::init_pair (6, COLOR_CYAN, COLOR_BLACK);
-
     try
     {
+        WINDOW* main_wnd = ::initscr();
+        if (!main_wnd)
+        {
+            cerr << "Couldn't init screen" << endl;
+            return 1;
+        }
+
+        // Destroy the window automatically
+        struct sScopeExit
+        {
+            ~sScopeExit () { ::endwin (); }
+        } scope_exit;
+
+        if (!::has_colors())
+        {
+            cerr << "Your terminal doesn't support colours" << endl;
+            return 1;
+        }
+
+        ::keypad (stdscr, TRUE);
+        ::raw ();
+        ::noecho ();
+        ::start_color ();
+        ::init_pair (1, COLOR_RED, COLOR_BLACK);
+        ::init_pair (2, COLOR_BLUE, COLOR_BLACK);
+        ::init_pair (3, COLOR_GREEN, COLOR_BLACK);
+        ::init_pair (4, COLOR_YELLOW, COLOR_BLACK);
+        ::init_pair (5, COLOR_MAGENTA, COLOR_BLACK);
+        ::init_pair (6, COLOR_CYAN, COLOR_BLACK);
+
         cCube cube (size);
         cCanvas canvas (cube.GetN(), 5, 0);
         cControl control;
