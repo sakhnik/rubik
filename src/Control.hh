@@ -22,7 +22,7 @@
 #pragma once
 
 #ifndef WIN32
-#  include <ncursesw/ncurses.h>
+#  include <ncurses.h>
 #else
 #  include <curses.h>
 #endif //WIN32

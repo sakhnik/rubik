@@ -33,10 +33,10 @@ case "$host" in
     ;;
   *)
     os_win32=no
-    AC_CHECK_HEADER(ncursesw/ncurses.h,
+    AC_CHECK_HEADER(ncurses.h,
                     :,
-                    AC_MSG_ERROR([required <ncursesw/ncurses.h> is missing]))
-    AC_CHECK_LIB(ncursesw,initscr)
+                    AC_MSG_ERROR([required <ncurses.h> is missing]))
+    AC_CHECK_LIB(ncurses,initscr)
     ;;
 esac
 AM_CONDITIONAL(OS_WIN32, [test "$os_win32" == "yes"])
