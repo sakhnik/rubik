@@ -36,10 +36,15 @@ struct Colour
     } _t;
 
     Colour (Type t) : _t(t) { }
-    operator Type () const { return _t; }
 
     // Number the colour starting from 1
     unsigned GetNumber () const;
+
+    bool operator==(Colour const &o) const
+    { return _t == o._t; }
+
+    bool operator!=(Colour const &o) const
+    { return _t != o._t; }
 
 private:
     template <typename T>
