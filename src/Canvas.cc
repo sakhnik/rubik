@@ -27,10 +27,12 @@ using namespace std;
 
 cCanvas::cCanvas (unsigned n,
                   unsigned y,
-                  unsigned x)
+                  unsigned x,
+                  const char *face)
     : _width (n * 4)
     , _height (n * 3)
     , _wnd (0)
+    , _face (face)
 {
     _wnd = ::newwin (_height, _width * 2, y, (COLS - 2*_width)/2);
     if (!_wnd)
@@ -51,7 +53,7 @@ void cCanvas::Render () const
 void cCanvas::SetPixel (unsigned x, unsigned y, Colour colour)
 {
     ::wattron (_wnd, COLOR_PAIR (colour.GetNumber ()));
-    ::mvwprintw (_wnd, y, x * 2, "█▌");
+    ::mvwprintw (_wnd, y, x * 2, "%s ", _face);
     ::wattroff (_wnd, COLOR_PAIR (colour.GetNumber ()));
 }
 

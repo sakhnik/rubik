@@ -34,7 +34,8 @@ class cCanvas
 public:
     cCanvas (unsigned n,
              unsigned y,
-             unsigned x);
+             unsigned x,
+             const char *face);
     ~cCanvas ();
 
     void Render () const;
@@ -46,6 +47,7 @@ private:
     unsigned _width;
     unsigned _height;
     WINDOW* _wnd;
+    const char *_face;
 };
 
 // vim: set et ts=4 sw=4:

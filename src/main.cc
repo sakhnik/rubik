@@ -49,6 +49,7 @@ int main (int argc, char* argv[])
     ::setlocale (LC_CTYPE, "");
 
     unsigned size (3);
+    const char *face = "@";
 
     while (true)
     {
@@ -56,11 +57,12 @@ int main (int argc, char* argv[])
         {
             { "help", no_argument, 0, 'h' },
             { "size", required_argument, 0, 's' },
+            { "face", required_argument, 0, 'f' },
             { 0, 0, 0, 0 }
         };
 
         int option_index = 0;
-        int c = ::getopt_long (argc, argv, "h?s:",
+        int c = ::getopt_long (argc, argv, "h?s:f:",
                                long_options, &option_index);
         if (c == -1)
             break;
@@ -77,6 +79,9 @@ int main (int argc, char* argv[])
                 cerr << "Invalid size `" << optarg << "'" << endl;
                 return 1;
             }
+            break;
+        case 'f':
+            face = optarg;
             break;
         default:
             return 1;
@@ -122,7 +127,7 @@ int main (int argc, char* argv[])
         ::init_pair (6, COLOR_CYAN, COLOR_BLACK);
 
         cCube cube (size);
-        cCanvas canvas (cube.GetN(), 5, 0);
+        cCanvas canvas (cube.GetN(), 5, 0, face);
         cControl control;
         while (true)
         {
