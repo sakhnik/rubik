@@ -337,7 +337,7 @@ static bool _CheckFaceColour (cCell const& cell,
                               cVector const& view)
 {
     Colour cell_colour = cell.GetColour (view);
-    if (face_colour == Colour::Undefined)
+    if (face_colour == Colour(Colour::Undefined))
         face_colour = cell_colour;
     else if (face_colour != cell_colour)
         return false;
